@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>valheim-thunderstore</Name>
+  <Repository>ghcr.io/czerwonowlosy666/valheim-unraid:latest</Repository>
+  <Registry>https://github.com/czerwonowlosy666/valheim-unraid/pkgs/container/valheim-unraid</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/czerwonowlosy666/valheim-unraid/issues</Support>
+  <Project>https://github.com/czerwonowlosy666/valheim-unraid</Project>
+  <Overview>Valheim dedicated server with Thunderstore mod support.[br][br]
+- Installs mods (and their dependencies) straight from thunderstore.io: list them by name or paste an r2modman / Thunderstore Mod Manager profile code.[br]
+- Keeps Valheim and your mods up to date automatically, waiting until nobody is online before restarting.[br]
+- Lets you choose the world seed, difficulty preset and world modifiers for new worlds.[br]
+- Backs up the world before every restart and saves cleanly on stop.[br][br]
+First start downloads about 1 GB of server files, so give it a few minutes. Forward UDP 2456-2457 on your router to play over the internet.</Overview>
+  <Category>GameServers:</Category>
+  <WebUI/>
+  <TemplateURL>https://raw.githubusercontent.com/czerwonowlosy666/valheim-unraid/main/unraid/valheim-thunderstore.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/czerwonowlosy666/valheim-unraid/main/unraid/icon.png</Icon>
+  <ExtraParams>--stop-timeout=120</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>About 2 GB of disk for server files, 4 GB+ of RAM (more with many mods).</Requires>
+
+  <!-- Ports -->
+  <Config Name="Game port" Target="2456" Default="2456" Mode="udp" Description="Valheim game port. Keep host and container port the same as SERVER_PORT." Type="Port" Display="always" Required="true" Mask="false">2456</Config>
+  <Config Name="Query port" Target="2457" Default="2457" Mode="udp" Description="Steam query port (game port + 1). Used for the server browser and the player count." Type="Port" Display="always" Required="true" Mask="false">2457</Config>
+
+  <!-- Storage -->
+  <Config Name="Data" Target="/config" Default="/mnt/user/appdata/valheim/data" Mode="rw" Description="Worlds (saves/), backups, mod configs (bepinex-config/), your own plugins (custom-plugins/) and logs." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/valheim/data</Config>
+  <Config Name="Server files" Target="/opt/valheim" Default="/mnt/user/appdata/valheim/server" Mode="rw" Description="Valheim server files, BepInEx and installed mods. Can be deleted; everything here is re-downloaded." Type="Path" Display="advanced" Required="true" Mask="false">/mnt/user/appdata/valheim/server</Config>
+
+  <!-- Server -->
+  <Config Name="Server name" Target="SERVER_NAME" Default="My Valheim Server" Description="Name shown in the server browser." Type="Variable" Display="always" Required="true" Mask="false">My Valheim Server</Config>
+  <Config Name="World name" Target="WORLD_NAME" Default="Dedicated" Description="World to load or create (letters and numbers, no spaces recommended). Changing it starts a new world; the old one stays in saves/." Type="Variable" Display="always" Required="true" Mask="false">Dedicated</Config>
+  <Config Name="Password" Target="SERVER_PASS" Default="" Description="At least 5 characters, and must not be part of the server name." Type="Variable" Display="always" Required="true" Mask="true"></Config>
+  <Config Name="World seed" Target="WORLD_SEED" Default="" Description="Seed for a NEW world (1-10 characters, e.g. HHcLC5acQt). Leave empty for random. Has no effect on a world that already exists." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Public" Target="SERVER_PUBLIC" Default="false|true" Description="List the server in the in-game community server browser." Type="Variable" Display="always" Required="false" Mask="false">false</Config>
+  <Config Name="Crossplay" Target="CROSSPLAY" Default="false|true" Description="Allow Xbox / Microsoft Store players (uses PlayFab; the player count for idle updates is not available with crossplay)." Type="Variable" Display="always" Required="false" Mask="false">false</Config>
+  <Config Name="Admins" Target="ADMINS" Default="" Description="SteamID64s of admins, separated by commas. Leave empty to manage saves/adminlist.txt yourself." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+
+  <!-- Mods -->
+  <Config Name="Mods" Target="MODS" Default="" Description="Thunderstore mods, separated by commas: Author-ModName (always latest), Author-ModName-1.2.3 (pinned) or the mod's thunderstore.io link. Dependencies and BepInEx are installed automatically. Example: ValheimModding-Jotunn, Azumatt-AzuCraftyBoxes" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Profile code" Target="THUNDERSTORE_PROFILE_CODE" Default="" Description="Optional. In r2modman or Thunderstore Mod Manager: Settings, Profile, Export profile as code. Installs the same mods as your client profile (saved locally, so it keeps working after the code expires)." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Exclude mods" Target="MODS_EXCLUDE" Default="" Description="Mods never to install, e.g. client-only UI mods from your profile. Same format as Mods." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Pin profile versions" Target="PROFILE_PIN_VERSIONS" Default="false|true" Description="true = keep the exact mod versions from the profile instead of updating them." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Import profile configs" Target="PROFILE_IMPORT_CONFIGS" Default="true|false" Description="Copy config files from the profile code (only files you don't already have)." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Always install BepInEx" Target="BEPINEX_ENABLED" Default="false|true" Description="Install BepInEx even with no Thunderstore mods. Happens automatically when custom-plugins/ has files." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+
+  <!-- Updates -->
+  <Config Name="Auto update" Target="AUTO_UPDATE" Default="true|false" Description="Check for Valheim and mod updates in the background and restart to apply them. Updates are always applied when the container starts." Type="Variable" Display="always" Required="false" Mask="false">true</Config>
+  <Config Name="Update Valheim" Target="SERVER_AUTO_UPDATE" Default="true|false" Description="Include Valheim itself in background updates." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Update mods" Target="MODS_AUTO_UPDATE" Default="true|false" Description="Include Thunderstore mods in background updates." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Update check interval" Target="UPDATE_CHECK_INTERVAL" Default="60" Description="Minutes between update checks." Type="Variable" Display="advanced" Required="false" Mask="false">60</Config>
+  <Config Name="Only update when empty" Target="UPDATE_WHEN_IDLE" Default="true|false" Description="Wait until no players are online before restarting for an update." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Max wait for empty server" Target="UPDATE_MAX_WAIT" Default="360" Description="Minutes to wait for an empty server before restarting anyway (0 = wait forever)." Type="Variable" Display="advanced" Required="false" Mask="false">360</Config>
+  <Config Name="Steam branch" Target="STEAM_BRANCH" Default="public" Description="Valheim branch, e.g. public or public-test." Type="Variable" Display="advanced" Required="false" Mask="false">public</Config>
+  <Config Name="Steam branch password" Target="STEAM_BRANCH_PASSWORD" Default="" Description="Password for a protected branch (public-test uses yesimadebackups)." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+
+  <!-- World -->
+  <Config Name="Difficulty preset" Target="WORLD_PRESET" Default="" Description="Optional: normal, casual, easy, hard, hardcore, immersive or hammer." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="World modifiers" Target="WORLD_MODIFIERS" Default="" Description="Optional, comma separated name:value. combat (veryeasy-veryhard), deathpenalty (casual-hardcore), resources (muchless-most), raids (none-muchmore), portals (casual, hard, veryhard). Example: combat:hard, raids:none" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="World keys" Target="WORLD_KEYS" Default="" Description="Optional, comma separated: nomap, playerevents, passivemobs, nobuildcost, fire, teleportall" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+
+  <!-- Misc -->
+  <Config Name="Backup on restart" Target="BACKUP_ON_RESTART" Default="true|false" Description="Save a .tar.gz of the world to backups/ before every start." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Backups to keep" Target="BACKUP_KEEP" Default="10" Description="Number of world backups to keep." Type="Variable" Display="advanced" Required="false" Mask="false">10</Config>
+  <Config Name="Server port" Target="SERVER_PORT" Default="2456" Description="Only change together with both port mappings (host and container) above." Type="Variable" Display="advanced" Required="false" Mask="false">2456</Config>
+  <Config Name="Extra server arguments" Target="SERVER_ARGS" Default="" Description="Passed straight to valheim_server, e.g. -saveinterval 600 -backups 4" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="PUID" Target="PUID" Default="99" Description="User ID files are owned by (99 = nobody)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Description="Group ID files are owned by (100 = users)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+  <Config Name="Timezone" Target="TZ" Default="Europe/London" Description="Timezone for logs and backup names." Type="Variable" Display="advanced" Required="false" Mask="false">Europe/London</Config>
+</Container>
