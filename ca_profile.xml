@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<CommunityApplications>
+  <Profile>
+Valheim dedicated server for Unraid with built-in Thunderstore mod support.
+
+- Install mods by name, by thunderstore.io link, or by pasting an r2modman / Thunderstore Mod Manager profile code. BepInEx and all dependencies are installed automatically.
+- Valheim and your mods are kept up to date automatically, and the server only restarts once nobody is online.
+- Choose the world seed, difficulty preset and world modifiers.
+- The world is saved cleanly on stop and backed up before every restart.
+
+No game files are included: Valheim is downloaded from Steam on first start. Not affiliated with Iron Gate or Thunderstore.
+
+For help, bug reports and feature requests, use the support thread linked on this page or open an issue on GitHub.
+  </Profile>
+  <Icon>https://raw.githubusercontent.com/czerwonowlosy666/valheim-unraid/main/unraid/icon.png</Icon>
+  <WebPage>https://github.com/czerwonowlosy666/valheim-unraid</WebPage>
+  <!-- Add your Unraid forum support thread once you've created it:
+  <Forum>https://forums.unraid.net/topic/XXXXXX-support-valheim-thunderstore/</Forum>
+  -->
+</CommunityApplications>
